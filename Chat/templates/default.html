@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 {% load static %}
+{% load render_bundle from webpack_loader %}
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-<!--    <link rel="stylesheet" href="{% static 'style/lk/style.css' %}" />-->
     <title>{% block title %} Чат {% endblock title %}</title>
-  <script defer src="{% static 'main.js'%}"></script><link href="{% static 'main.css' %}" rel="stylesheet"></head>
+  {% render_bundle 'main' 'css'%}
   <body>
     <div class="wrapper">
       <header class="header">
@@ -22,10 +22,20 @@
           </ul>
         </nav>
       </header>
-      <main class="root">
-      {% block content %}
-      {% endblock content %}
+      <main id="root" class="main">
+        {% block content %}
+        {% if user.is_authenticated %}
+            {% render_bundle 'main' 'js'%}
+        {% else %}
+        <h1>Добро пожаловать в наш чат</h1>
+        <h2>Для начала общения, войдите или зарегистрируйтесь</h2>
+
+        {% endif %}
+        {% endblock %}
+
       </main>
+
+
       <footer class="footer"></footer>
     </div>
   </body>

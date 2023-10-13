@@ -10,8 +10,7 @@ const config: Configuration = {
   mode: "development",
   context: __dirname,
   output: {
-    path: path.resolve(__dirname, "../Chat/static"),
-    publicPath: "/",
+    path: path.resolve(__dirname, "./Chat/static/webpack_bundles/"),
     filename: "[name]-[hash].js",
     clean: true,
   },
@@ -73,7 +72,10 @@ const config: Configuration = {
     new ESLintPlugin({
       extensions: ["js", "jsx", "ts", "tsx"],
     }),
-    new BundleTracker({ path: __dirname, filename: "webpack-stats.json" }),
+    new BundleTracker({
+      path: path.resolve("./Chat/"),
+      filename: "webpack-stats.json",
+    }),
   ],
   devtool: "inline-source-map",
 };

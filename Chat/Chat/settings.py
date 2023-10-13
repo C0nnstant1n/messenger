@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'messenger',
     'rest_framework',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +128,16 @@ STATICFILES_DIRS = [
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'img')
 MEDIA_URL = 'uploads/'
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.2,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+    }
+}
+
 
 
 # Default primary key field type

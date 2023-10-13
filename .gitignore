@@ -18,3 +18,5 @@ pinegrow.json
 launch.json
 .vscode/
 node_modules/
+webpack-stats.json
+static/

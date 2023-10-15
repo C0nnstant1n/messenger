@@ -1,10 +1,15 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import userReducer from "./reducers/UserSlice";
-const rootReducer = combineReducers({ userReducer });
+import { roomsApi } from "../service/RoomsService";
+
+const rootReducer = combineReducers({
+  [roomsApi.reducerPath]: roomsApi.reducer,
+});
 
 export const setupStore = () => {
   return configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(roomsApi.middleware),
   });
 };
 

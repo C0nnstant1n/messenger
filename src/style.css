@@ -97,7 +97,10 @@ h2 {
   max-width: 200px;
   height: 40px;
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-end;
   border-radius: 10px;
 }
 

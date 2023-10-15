@@ -1,11 +1,26 @@
 import * as React from "react";
+import { roomsApi } from "../service/RoomsService";
+import RoomItem from "./RoomItem";
+import { Room } from "../models/IRooms";
+
+async function roomCreate() {
+  const name = prompt();
+  await createRoom({ name, body: name } as Room);
+}
 
 export default function LeftColumn() {
+  const { data: rooms, error, isLoading } = roomsApi.useFetchAllRoomsQuery(10);
+  const [createRoom, {}] = roomsApi.useCreateRoomMutation();
   return (
     <>
       <nav className='leftColumn'>
         <h3>Комнаты</h3>
-        <ul className='rooms'></ul>
+        <ul>
+          {isLoading && <h2>Загрузка...</h2>}
+          {error && <h2>Ошибка Сети</h2>}
+          {rooms &&
+            rooms.results.map((room) => <RoomItem key={room.id} room={room} />)}
+        </ul>
         {/* {% if user.is_authenticated %} */}
         <div className='itc-select' id='select-1'>
           {/* <!-- Кнопка для открытия выпадающего списка --> */}
@@ -25,9 +40,9 @@ export default function LeftColumn() {
             <ul className='itc-select__options'></ul>
           </div>
         </div>
-        <a className='room-button' href='/create'>
+        <button className='room-button' onClick={roomCreate()}>
           Создать комнату
-        </a>
+        </button>
       </nav>
     </>
   );

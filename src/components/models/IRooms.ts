@@ -1,10 +1,10 @@
-import { User } from "./IUser";
+import { IUser } from "./IUser";
 
 export interface Room {
   id: number;
   author: number;
   name: string;
-  members: User[];
+  members: IUser[];
 }
 
 export interface RoomsData {

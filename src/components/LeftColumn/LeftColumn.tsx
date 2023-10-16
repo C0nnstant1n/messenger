@@ -3,14 +3,18 @@ import { roomsApi } from "../service/RoomsService";
 import RoomItem from "./RoomItem";
 import { Room } from "../models/IRooms";
 
-async function roomCreate() {
-  const name = prompt();
-  await createRoom({ name, body: name } as Room);
-}
-
 export default function LeftColumn() {
   const { data: rooms, error, isLoading } = roomsApi.useFetchAllRoomsQuery(10);
   const [createRoom, {}] = roomsApi.useCreateRoomMutation();
+  const [deleteRoom, {}] = roomsApi.useDeleteRoomMutation();
+  const roomCreate = async () => {
+    const name = prompt();
+    await createRoom({ name } as Room);
+  };
+
+  const handleRemove = (room: Room) => {
+    deleteRoom(room);
+  };
   return (
     <>
       <nav className='leftColumn'>
@@ -19,7 +23,9 @@ export default function LeftColumn() {
           {isLoading && <h2>Загрузка...</h2>}
           {error && <h2>Ошибка Сети</h2>}
           {rooms &&
-            rooms.results.map((room) => <RoomItem key={room.id} room={room} />)}
+            rooms.results.map((room) => (
+              <RoomItem key={room.id} remove={handleRemove} room={room} />
+            ))}
         </ul>
         {/* {% if user.is_authenticated %} */}
         <div className='itc-select' id='select-1'>
@@ -40,7 +46,7 @@ export default function LeftColumn() {
             <ul className='itc-select__options'></ul>
           </div>
         </div>
-        <button className='room-button' onClick={roomCreate()}>
+        <button className='room-button' onClick={roomCreate}>
           Создать комнату
         </button>
       </nav>

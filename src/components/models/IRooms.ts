@@ -7,7 +7,7 @@ export interface Room {
   members: IUser[];
 }
 
-export interface RoomsData {
+export interface ApiData {
   count: number;
   next: null | string;
   previous: null | string;

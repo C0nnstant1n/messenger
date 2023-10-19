@@ -7,6 +7,7 @@ export default function LeftColumn() {
   const { data: rooms, error, isLoading } = roomsApi.useFetchAllRoomsQuery(10);
   const [createRoom, {}] = roomsApi.useCreateRoomMutation();
   const [deleteRoom, {}] = roomsApi.useDeleteRoomMutation();
+  const [editRoom, {}] = roomsApi.useEditRoomMutation();
   const roomCreate = async () => {
     const name = prompt();
     await createRoom({ name } as Room);
@@ -15,6 +16,11 @@ export default function LeftColumn() {
   const handleRemove = (room: Room) => {
     deleteRoom(room);
   };
+
+  const handleEdit = (room: Room) => {
+    editRoom(room);
+  };
+
   return (
     <>
       <nav className='leftColumn'>
@@ -24,7 +30,12 @@ export default function LeftColumn() {
           {error && <h2>Ошибка Сети</h2>}
           {rooms &&
             rooms.results.map((room) => (
-              <RoomItem key={room.id} remove={handleRemove} room={room} />
+              <RoomItem
+                key={room.id}
+                edit={handleEdit}
+                remove={handleRemove}
+                room={room}
+              />
             ))}
         </ul>
         {/* {% if user.is_authenticated %} */}

@@ -1,12 +1,19 @@
-from rest_framework import viewsets, mixins, permissions, generics
-from rest_framework.views import APIView
+from rest_framework import viewsets, permissions, generics
 from .serializers import *
 from django.views.generic import CreateView, TemplateView
 from .forms import CreateMessageForm
 from .models import Room
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class CurrentUser(viewsets.ReadOnlyModelViewSet):
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user == obj.author
+
+
+class CurrentUser(LoginRequiredMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = CurrentUserSerializer
 
     def get_queryset(self):
@@ -17,12 +24,12 @@ class CurrentUser(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class UsersViewSet(viewsets.ModelViewSet):
+class UsersViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
 
 
-class MessageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
@@ -34,9 +41,9 @@ class MessageViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class RoomViewSet(viewsets.ModelViewSet):
+class RoomViewSet(LoginRequiredMixin, IsOwnerOrReadOnly, viewsets.ModelViewSet):
     serializer_class = RoomSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -49,12 +56,12 @@ class RoomViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class RoomDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Room.objects.all()
-    serializer_class = RoomSerializer
+# class RoomDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Room.objects.all()
+#     serializer_class = RoomSerializer
 
 
-class RoomMembersViewSet(viewsets.ModelViewSet):
+class RoomMembersViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = RoomMembers.objects.all()
     serializer_class = RoomMembersSerializer
 
@@ -67,7 +74,7 @@ class IndexView(TemplateView):
         return context
 
 
-class CreateRoomView(TemplateView):
+class CreateRoomView(LoginRequiredMixin, TemplateView):
     template_name = 'messenger/create_room.html'
 
     def perform_create(self, serializer):
